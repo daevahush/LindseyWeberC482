@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
 import java.util.ResourceBundle;
+import java.util.function.Predicate;
 
 public class MainScreenController implements Initializable {
 
@@ -89,17 +90,27 @@ public class MainScreenController implements Initializable {
     @FXML
     void deletePartOnClick(MouseEvent event) {
         try {
-            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
-            alert.setContentText("Are you sure you want to delete this item? ");
+            Part selectedPart = partTableview.getSelectionModel().getSelectedItem();
+            Predicate<Product> hasPart = (product) -> product.getAllAssociatedParts().contains(selectedPart);
+            ObservableList<Product> productsWithPart = Inventory.getAllProducts().filtered(hasPart);
 
-            Optional<ButtonType> result = alert.showAndWait();
+            if(productsWithPart.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+                alert.setContentText("Are you sure you want to delete this item? ");
 
-            if(result.get() == ButtonType.OK) {
-                Inventory.deletePart(partTableview.getSelectionModel().getSelectedItem());
+                Optional<ButtonType> result = alert.showAndWait();
+
+                if (result.get() == ButtonType.OK) {
+                    Inventory.deletePart(selectedPart);
+                }
+            } else {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setContentText("This part is in use by a product");
+                alert.showAndWait();
             }
 
         } catch(NullPointerException e) {
-            System.out.println("Select item to delete");
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
             alert.setContentText("Please select an item to delete");
@@ -156,8 +167,10 @@ public class MainScreenController implements Initializable {
             loader.load();
 
             ModifyPartController ModPartController = loader.getController();
-            ModPartController.getPartDetails(partTableview.getSelectionModel().getSelectedItem());
+            Part selectedItem = partTableview.getSelectionModel().getSelectedItem();
+            int itemIndex = partTableview.getSelectionModel().getSelectedIndex();
 
+            ModPartController.getPartDetails(selectedItem, itemIndex);
 
             stage = (Stage)((Button)event.getSource()).getScene().getWindow();
             Parent scene = loader.getRoot();
@@ -179,8 +192,10 @@ public class MainScreenController implements Initializable {
             loader.load();
 
             ModifyProductController ModProdController = loader.getController();
-            ModProdController.getProdDetails(prodTableview.getSelectionModel().getSelectedItem());
+            Product selectedItem = prodTableview.getSelectionModel().getSelectedItem();
+            int itemIndex = prodTableview.getSelectionModel().getSelectedIndex();
 
+            ModProdController.getProdDetails(selectedItem, itemIndex);
 
             stage = (Stage)((Button)event.getSource()).getScene().getWindow();
             Parent scene = loader.getRoot();
@@ -238,7 +253,7 @@ public class MainScreenController implements Initializable {
                     filteredProducts.add(product);
                 }
             } catch(NumberFormatException e) {
-                //insert error alert here
+                //Catching error if nothing found for ID, empty table being returned either way
             }
         }
 
@@ -263,6 +278,5 @@ public class MainScreenController implements Initializable {
         prodNameColumn.setCellValueFactory(new PropertyValueFactory<>("productName"));
         prodInvLevelColumn.setCellValueFactory(new PropertyValueFactory<>("productStock"));
         prodPriceColumn.setCellValueFactory(new PropertyValueFactory<>("productPrice"));
-
     }
 }

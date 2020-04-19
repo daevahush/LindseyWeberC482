@@ -60,6 +60,7 @@ public class ModifyPartController implements Initializable {
 
     @FXML
     private Label sourceLabel;
+    private int itemIndex;
 
     @FXML
     void cancelOnClick(MouseEvent event) throws IOException {
@@ -99,45 +100,48 @@ public class ModifyPartController implements Initializable {
             int max = Integer.parseInt(partMaxText.getText());
             int min = Integer.parseInt(partMinText.getText());
 
-            //Adds parts to part list
-            if(InHouseRadio.isSelected()) {
-                int machineID = Integer.parseInt(sourceText.getText());
-                Inventory.updatePart(id, new InHouse(id, name, price, stock, min, max, machineID));
-            }
-
-            if(OutsourcedRadio.isSelected()) {
-                String companyName = sourceText.getText();
-                Inventory.updatePart(id, new Outsourced(id, name, price, stock, min, max, companyName));
-            }
-
             //Logical Error Handling
             if((stock > max) || (stock < min) || (stock < 0)) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Please enter valid inventory value. " +
                         "Cannot be greater or less than minimum and maximum values");
                 alert.showAndWait();
-            }
 
-            if((min > max) || (min < 0) || (max < 0)){
+            } else if((min > max) || (min < 0) || (max < 0)){
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Please enter valid min and max values. " +
                         "Minimum must be less than Maximum and vice versa." +
                         "Values can not be below zero.");
                 alert.showAndWait();
-            }
 
-            if(price <=0) {
+            } else if(price <=0) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Please enter valid price" +
                         "Value can not be zero or below.");
                 alert.showAndWait();
-            }
 
-            //Moves back to Main screen
-            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-            scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
-            stage.setScene(new Scene(scene));
-            stage.show();
+            } else if(InHouseRadio.isSelected()) { //Adds parts to part list
+                int machineID = Integer.parseInt(sourceText.getText());
+                InHouse newPart = new InHouse(id, name, price, stock, min, max, machineID);
+                Inventory.updatePart(itemIndex,newPart);
+
+                //Moves back to Main screen
+                stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+                scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+                stage.setScene(new Scene(scene));
+                stage.show();
+
+            } else if(OutsourcedRadio.isSelected()) { //Adds parts to part list
+                String companyName = sourceText.getText();
+                Outsourced newPart = new Outsourced(id, name, price, stock, min, max, companyName);
+                Inventory.updatePart(itemIndex, newPart);
+
+                //Moves back to Main screen
+                stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+                scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+                stage.setScene(new Scene(scene));
+                stage.show();
+            }
 
         } catch(NumberFormatException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -148,7 +152,9 @@ public class ModifyPartController implements Initializable {
     }
 
     //Get part details from Main Screen Controller for which part to mod
-    public void getPartDetails(Part part) {
+    public void getPartDetails(Part part, int index) {
+        itemIndex = index;
+
         partIDLabel.setText(String.valueOf(part.getPartID()));
         partNameText.setText(part.getPartName());
         partInvText.setText(String.valueOf(part.getPartStock()));

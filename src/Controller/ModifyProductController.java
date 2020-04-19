@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.*;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -11,7 +12,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import java.net.URL;
 import java.util.Optional;
@@ -21,7 +21,6 @@ public class ModifyProductController implements Initializable {
 
     Stage stage;
     Parent scene;
-
 
     @FXML
     private Button searchPartButton;
@@ -40,7 +39,6 @@ public class ModifyProductController implements Initializable {
 
     @FXML
     private TableView<Part> AddPartTableview;
-
 
     @FXML
     private TableColumn<?, ?> addpartIDColumn;
@@ -90,10 +88,43 @@ public class ModifyProductController implements Initializable {
     @FXML
     private Label prodIDLabel;
 
+    private ObservableList<Part> currentParts;
+    private Product currentProduct;
+    private int itemIndex;
+
     @FXML
     void addPartOnClick(MouseEvent event) {
         try {
-            Product.addAssociatedPart(AddPartTableview.getSelectionModel().getSelectedItem());
+            Part partToAdd = AddPartTableview.getSelectionModel().getSelectedItem();
+            int partID = partToAdd.getPartID();
+            Boolean partExists = false;
+            Double totalPrice = partToAdd.getPartPrice();
+
+            for (int i = 0; i < currentParts.size(); i++) {
+                Part part = currentParts.get(i);
+                totalPrice += part.getPartPrice();
+                if (part.getPartID() == partID) {
+                    partExists = true;
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("This part is already added");
+                    alert.showAndWait();
+                    break;
+                }
+            }
+
+            if (!partExists) {
+                currentParts.add(partToAdd);
+
+                try {
+                    String currentPriceText = prodPriceText.getText();
+                    Double currentPrice = Double.parseDouble(currentPriceText.isEmpty() ? "0" : currentPriceText);
+                    prodPriceText.setText(String.valueOf(totalPrice < currentPrice ? currentPrice : totalPrice));
+                } catch (NumberFormatException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Invalid price. Numbers only please!");
+                    alert.showAndWait();
+                }
+            }
 
         } catch(NullPointerException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -122,7 +153,7 @@ public class ModifyProductController implements Initializable {
     @FXML
     void deletePartOnClick(MouseEvent event) {
         try {
-            Product.deleteAssociatedPart(AddPartTableview.getSelectionModel().getSelectedItem());
+            currentParts.remove(DeletePartTablevew.getSelectionModel().getSelectedItem());
         } catch(NullPointerException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Please select an item to delete");
@@ -132,21 +163,68 @@ public class ModifyProductController implements Initializable {
 
     @FXML
     void saveOnClick(MouseEvent event) throws IOException {
+        try {
+            String name = prodNameText.getText();
+            int stock = Integer.parseInt(prodInvText.getText());
+            double price = Double.parseDouble(prodPriceText.getText());
+            int max = Integer.parseInt(prodMaxText.getText());
+            int min = Integer.parseInt(prodMinText.getText());
 
-        int id = Integer.parseInt(prodIDLabel.getText());
-        String name = prodNameText.getText();
-        int stock = Integer.parseInt(prodInvText.getText());
-        double price = Double.parseDouble(prodPriceText.getText());
-        int max = Integer.parseInt(prodMaxText.getText());
-        int min = Integer.parseInt(prodMinText.getText());
+            //Logical Error Handling
+            if(name.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please name your product");
+                alert.showAndWait();
+            } else if(currentParts.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please add at least one part");
+                alert.showAndWait();
+            } else if ((stock > max) || (stock < min) || (stock < 0)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please enter valid inventory value. " +
+                        "Cannot be greater or less than minimum and maximum values");
+                alert.showAndWait();
 
-        Inventory.updateProduct(Integer.parseInt(prodIDLabel.getText()), new Product(id, name, price, stock, min, max));
+            } else if ((min > max) || (min < 0) || (max < 0)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please enter valid min and max values. " +
+                        "Minimum must be less than Maximum and vice versa." +
+                        "Values can not be below zero.");
+                alert.showAndWait();
 
-        stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
-        stage.setScene(new Scene(scene));
-        stage.show();
-    } //BROKEN
+            } else if (price <= 0) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please enter valid price. " +
+                        "Value can not be zero or below.");
+                alert.showAndWait();
+            } else {
+                currentProduct.setProductName(name);
+                currentProduct.setProductStock(stock);
+                currentProduct.setProductPrice(price);
+                currentProduct.setProductMin(min);
+                currentProduct.setProductMax(max);
+
+                currentProduct.getAllAssociatedParts().clear();
+
+                for(Part part : currentParts) {
+                    currentProduct.addAssociatedPart(part);
+                }
+
+                Inventory.updateProduct(itemIndex, currentProduct);
+
+                //Moves back to Main screen
+                stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+                scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+                stage.setScene(new Scene(scene));
+                stage.show();
+            }
+
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Please enter valid values");
+            alert.showAndWait();
+        }
+    }
 
     @FXML
     void searchOnClick(MouseEvent event) {
@@ -161,7 +239,7 @@ public class ModifyProductController implements Initializable {
                     filteredParts.add(part);
                 }
             } catch(NumberFormatException e) {
-                //insert error alert here
+                //Catching error when nothing found, empty table returned
             }
         }
 
@@ -169,17 +247,18 @@ public class ModifyProductController implements Initializable {
     }
 
 //  Get product details selected from Main Screen to modify
-    public void getProdDetails(Product product) {
+    public void getProdDetails(Product product, int index) {
+        itemIndex = index;
+        currentProduct = product;
+        currentParts = FXCollections.observableArrayList(product.getAllAssociatedParts());
         prodIDLabel.setText(String.valueOf(product.getProductID()));
         prodNameText.setText(product.getProductName());
         prodInvText.setText(String.valueOf(product.getProductStock()));
         prodPriceText.setText(String.valueOf(product.getProductPrice()));
         prodMaxText.setText(String.valueOf(product.getProductMax()));
         prodMinText.setText(String.valueOf(product.getProductMin()));
-        DeletePartTablevew.setItems(product.getAllAssociatedParts());
-        //Include one more to populate Delete table with items from associated parts list
-
-    } //THIS NEEDS TO BE FIXED
+        DeletePartTablevew.setItems(currentParts);
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -191,8 +270,7 @@ public class ModifyProductController implements Initializable {
         addinvLevelColumn.setCellValueFactory(new PropertyValueFactory<>("partStock"));
         addpriceColumn.setCellValueFactory(new PropertyValueFactory<>("partPrice"));
 
-//      Set tableview data for associated parts
-        DeletePartTablevew.setItems(Product.getAllAssociatedParts());
+//      Set table view data for associated parts
         delpartIDColumn.setCellValueFactory(new PropertyValueFactory<>("partID"));
         delpartNameColumn.setCellValueFactory(new PropertyValueFactory<>("partName"));
         delinvLevelColumn.setCellValueFactory(new PropertyValueFactory<>("partStock"));

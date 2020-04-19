@@ -5,7 +5,7 @@ import javafx.collections.ObservableList;
 
 public class Product {
 
-    private static ObservableList<Part> associatedParts = FXCollections.observableArrayList();
+    private ObservableList<Part> associatedParts = FXCollections.observableArrayList();
     private int productID;
     private String productName;
     private double productPrice;
@@ -46,19 +46,6 @@ public class Product {
         this.productMax = productMax;
     }
 
-    public void setProductPriceMax(int productMax) {
-        //what in the hell even goes here?
-        //Just says setPrice(max:int):void
-
-        //takes the sum of all the prices of
-        // the associated parts and that is the price max
-
-        //This value cant be less than the sum of the individual parts
-
-        //This apparently was a mistake in the UML diagram
-        //This doesn't need to be used
-    }
-
     public int getProductID() {
         return this.productID;
     }
@@ -83,11 +70,11 @@ public class Product {
         return this.productMax;
     }
 
-    public static void addAssociatedPart(Part part) {
-        associatedParts.add(part);
+    public void addAssociatedPart(Part part) {
+        this.associatedParts.add(part);
     }
 
-    public static boolean deleteAssociatedPart(Part selectedAsPart) {
+    public boolean deleteAssociatedPart(Part selectedAsPart) {
        for(Part part : getAllAssociatedParts()) {
 
            if(part.getPartID() == selectedAsPart.getPartID()) {
@@ -98,8 +85,8 @@ public class Product {
        return false;
    }
 
-    public static ObservableList<Part> getAllAssociatedParts() {
-        return associatedParts;
+    public  ObservableList<Part> getAllAssociatedParts() {
+        return this.associatedParts;
    }
 
 }

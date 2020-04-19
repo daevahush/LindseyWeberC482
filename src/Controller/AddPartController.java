@@ -3,6 +3,7 @@ package Controller;
 import Model.InHouse;
 import Model.Inventory;
 import Model.Outsourced;
+import Model.Part;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -13,6 +14,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -98,45 +100,42 @@ public class AddPartController implements Initializable {
             int max = Integer.parseInt(AddPartMaxText.getText());
             int min = Integer.parseInt(AddPartMinText.getText());
 
-            if(InHouseRadio.isSelected()) {
-                int machineID = Integer.parseInt(sourceText.getText());
-                Inventory.addPart(new InHouse(id, name, price, stock, min, max, machineID));
-            }
-
-            if(OutsourcedRadio.isSelected()) {
-                String companyName = sourceText.getText();
-                Inventory.addPart(new Outsourced(id, name, price, stock, min, max, companyName));
-            }
-
-            //this is throwing the error messages, but still saving the new parts with bad data
             //Logical Error Handling
             if((stock > max) || (stock < min) || (stock < 0)) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Please enter valid inventory value. " +
                         "Cannot be greater or less than minimum and maximum values");
                 alert.showAndWait();
-            }
-
-            if((min > max) || (min < 0) || (max < 0)){
+            } else if((min > max) || (min < 0) || (max < 0)){
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Please enter valid min and max values. " +
                         "Minimum must be less than Maximum and vice versa." +
                         "Values can not be below zero.");
                 alert.showAndWait();
-            }
-
-            if(price <=0) {
+            } else if(price <=0) {
                 Alert alert = new Alert(Alert.AlertType.ERROR);
                 alert.setContentText("Please enter valid price" +
                         "Value can not be zero or below.");
                 alert.showAndWait();
-            }
+            } else if(InHouseRadio.isSelected()) { //Creates new InHouse part
+                int machineID = Integer.parseInt(sourceText.getText());
+                Inventory.addPart(new InHouse(id, name, price, stock, min, max, machineID));
 
-            //Moves back to Main screen
-            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-            scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
-            stage.setScene(new Scene(scene));
-            stage.show();
+                //Moves back to Main screen
+                stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+                scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+                stage.setScene(new Scene(scene));
+                stage.show();
+            } else if(OutsourcedRadio.isSelected()) { //Creates new Outsourced part
+                String companyName = sourceText.getText();
+                Inventory.addPart(new Outsourced(id, name, price, stock, min, max, companyName));
+
+                //Moves back to Main screen
+                stage = (Stage)((Button)event.getSource()).getScene().getWindow();
+                scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+                stage.setScene(new Scene(scene));
+                stage.show();
+            }
 
         } catch(NumberFormatException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -145,13 +144,16 @@ public class AddPartController implements Initializable {
             alert.showAndWait();
         }
 
-    } //BROKEN
+    }
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
 
         //generate an ID based on the number of items in the list to use for new part
-        AddPartIDLabel.setText(String.valueOf((Inventory.allParts.size()) + 1));
+        Comparator<Part> byID = (partA, partB) -> partB.getPartID() - partA.getPartID();
+        int nextID = Inventory.allParts.sorted(byID).get(0).getPartID() +1;
+
+        AddPartIDLabel.setText(String.valueOf(nextID));
 
         //Set preselected radio button on start
         InHouseRadio.setSelected(true);

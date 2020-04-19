@@ -19,10 +19,10 @@ public class Inventory {
     public static Part lookupPart(int partID) {
         ObservableList<Part> allParts = getAllParts();
 
-        for(int i = 0; i < allParts.size(); i++) {
+        for (int i = 0; i < allParts.size(); i++) {
             Part part = allParts.get(i);
 
-            if(part.getPartID() == partID) {
+            if (part.getPartID() == partID) {
                 return part;
             }
         }
@@ -35,7 +35,7 @@ public class Inventory {
         for (int i = 0; i < allProducts.size(); i++) {
             Product product = allProducts.get(i);
 
-            if(product.getProductID() == productID) {
+            if (product.getProductID() == productID) {
                 return product;
             }
         }
@@ -46,10 +46,10 @@ public class Inventory {
         ObservableList<Part> filteredParts = FXCollections.observableArrayList();
         partName = partName.toLowerCase();
 
-        for(Part part : getAllParts()) {
+        for (Part part : getAllParts()) {
             String name = part.getPartName().toLowerCase();
 
-            if(name.contains(partName)) {
+            if (name.contains(partName)) {
                 filteredParts.add(part);
             }
         }
@@ -60,10 +60,10 @@ public class Inventory {
         ObservableList<Product> filteredProducts = FXCollections.observableArrayList();
         productName = productName.toLowerCase();
 
-        for(Product product : getAllProducts()) {
+        for (Product product : getAllProducts()) {
             String name = product.getProductName().toLowerCase();
 
-            if(name.contains(productName)) {
+            if (name.contains(productName)) {
                 filteredProducts.add(product);
             }
         }
@@ -71,34 +71,17 @@ public class Inventory {
     }
 
     public static void updatePart(int index, Part selectedPart) {
-        int indexCount = 1;
-
-        for(Part part : Inventory.getAllParts()) {
-            indexCount++;
-
-            if(part.getPartID() == (index)) {
-                Inventory.getAllParts().set(index, selectedPart);
-            }
-        }
+        Inventory.getAllParts().set(index, selectedPart);
     }
 
     public static void updateProduct(int index, Product selectedProduct) {
-        int indexCount = 1;
-
-        for(Product product : Inventory.getAllProducts()) {
-            indexCount++;
-
-            if(product.getProductID() == (index + 1)) {
-                Inventory.getAllProducts().set(index, selectedProduct);
-            }
-        }
-
+        Inventory.getAllProducts().set(index, selectedProduct);
     }
 
     public static boolean deletePart(Part selectedPart) {
-        for(Part part : Inventory.getAllParts()) {
+        for (Part part : Inventory.getAllParts()) {
 
-            if(part.getPartID() == selectedPart.getPartID()) {
+            if (part.getPartID() == selectedPart.getPartID()) {
                 Inventory.getAllParts().remove(selectedPart);
                 return true;
             }
@@ -107,9 +90,9 @@ public class Inventory {
     }
 
     public static boolean deleteProduct(Product selectedProduct) {
-        for(Product product : Inventory.getAllProducts()) {
+        for (Product product : Inventory.getAllProducts()) {
 
-            if(product.getProductID() == selectedProduct.getProductID()) {
+            if (product.getProductID() == selectedProduct.getProductID()) {
                 Inventory.getAllProducts().remove(selectedProduct);
                 return true;
             }
@@ -124,5 +107,4 @@ public class Inventory {
     public static ObservableList<Product> getAllProducts() {
         return allProducts;
     }
-
 }

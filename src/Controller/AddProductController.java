@@ -13,6 +13,7 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Comparator;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -87,13 +88,43 @@ public class AddProductController implements Initializable {
     @FXML
     private Label AddProdIDLabel;
 
+    private Product newProduct;
+
     @FXML
     void addPartOnClick(MouseEvent event) {
         try {
+            Part partToAdd = AddPartTableview.getSelectionModel().getSelectedItem();
+            int partID = partToAdd.getPartID();
+            Boolean partExists = false;
+            Double totalPrice = partToAdd.getPartPrice();
 
-            Product.addAssociatedPart(AddPartTableview.getSelectionModel().getSelectedItem());
+            for (int i = 0; i < newProduct.getAllAssociatedParts().size(); i++) {
+                Part part = newProduct.getAllAssociatedParts().get(i);
+                totalPrice += part.getPartPrice();
+                if (part.getPartID() == partID) {
+                    partExists = true;
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("This part is already added");
+                    alert.showAndWait();
+                    break;
+                }
+            }
 
-        } catch(NullPointerException e) {
+            if (!partExists) {
+                newProduct.addAssociatedPart(partToAdd);
+
+                try {
+                    String currentPriceText = AddProdPriceText.getText();
+                    Double currentPrice = Double.parseDouble(currentPriceText.isEmpty() ? "0" : currentPriceText);
+                    AddProdPriceText.setText(String.valueOf(totalPrice < currentPrice ? currentPrice : totalPrice));
+                } catch (NumberFormatException e) {
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setContentText("Invalid price. Numbers only please!");
+                    alert.showAndWait();
+                }
+            }
+
+        } catch (NullPointerException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Please select an item to add");
             alert.showAndWait();
@@ -108,7 +139,7 @@ public class AddProductController implements Initializable {
 
         Optional<ButtonType> result = alert.showAndWait();
 
-        if(result.get() == ButtonType.OK) {
+        if (result.get() == ButtonType.OK) {
             stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
             scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
             stage.setScene(new Scene(scene));
@@ -119,8 +150,8 @@ public class AddProductController implements Initializable {
     @FXML
     void deletePartOnClick(MouseEvent event) {
         try {
-            Product.deleteAssociatedPart(AddPartTableview.getSelectionModel().getSelectedItem());
-        } catch(NullPointerException e) {
+            newProduct.deleteAssociatedPart(DeletePartTablevew.getSelectionModel().getSelectedItem());
+        } catch (NullPointerException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Please select an item to delete");
             alert.showAndWait();
@@ -130,29 +161,60 @@ public class AddProductController implements Initializable {
     @FXML
     void saveProdOnClick(MouseEvent event) throws IOException {
         try {
-            int id = Integer.parseInt(AddProdIDLabel.getText());
             String name = AddProdNameText.getText();
             int stock = Integer.parseInt(AddProdInvText.getText());
             double price = Double.parseDouble(AddProdPriceText.getText());
-            int max = Integer.parseInt(AddProdMaxText.getText());
             int min = Integer.parseInt(AddProdMinText.getText());
-
-            Inventory.addProduct(new Product(id, name, price, stock, min, max));
+            int max = Integer.parseInt(AddProdMaxText.getText());
 
             //Logical Error Handling
+            if(name.isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please name your product");
+                alert.showAndWait();
+            }
+            else if(newProduct.getAllAssociatedParts().isEmpty()) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please add at least one part");
+                alert.showAndWait();
+            } else if ((stock > max) || (stock < min) || (stock < 0)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please enter valid inventory value. " +
+                        "Cannot be greater or less than minimum and maximum values");
+                alert.showAndWait();
 
-//            if(price < totalPriceForAllAssociatedParts);
-//            if(price > totalPriceForAllAssoicatedParts);
-//            if(associatedParts.isEmpty()); (must contain at least one part)
+            } else if ((min > max) || (min < 0) || (max < 0)) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please enter valid min and max values. " +
+                        "Minimum must be less than Maximum and vice versa." +
+                        "Values can not be below zero.");
+                alert.showAndWait();
 
-            //Moves back to Main screen
-            stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-            scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
-            stage.setScene(new Scene(scene));
-            stage.show();
+            } else if (price <= 0) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setContentText("Please enter valid price. " +
+                        "Value can not be zero or below.");
+                alert.showAndWait();
+            } else {
+                newProduct.setProductName(name);
+                newProduct.setProductStock(stock);
+                newProduct.setProductPrice(price);
+                newProduct.setProductMin(min);
+                newProduct.setProductMax(max);
 
-        } catch(NumberFormatException e) {
-            System.out.println("Please enter valid values");
+                Inventory.addProduct(newProduct);
+
+                //Moves back to Main screen
+                stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
+                scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+                stage.setScene(new Scene(scene));
+                stage.show();
+            }
+
+        } catch (NumberFormatException e) {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setContentText("Please enter valid values");
+            alert.showAndWait();
         }
     }
 
@@ -161,15 +223,15 @@ public class AddProductController implements Initializable {
         String query = AddProdSearchText.getText();
         ObservableList<Part> filteredParts = Inventory.lookupPart(query);
 
-        if(filteredParts.size() == 0) {
+        if (filteredParts.size() == 0) {
             try {
                 int id = Integer.parseInt(query);
                 Part part = Inventory.lookupPart(id);
-                if(part != null) {
+                if (part != null) {
                     filteredParts.add(part);
                 }
-            } catch(NumberFormatException e) {
-                //insert error alert here
+            } catch (NumberFormatException e) {
+                //Eating error because when nothing found, empty table is returned
             }
         }
 
@@ -180,8 +242,11 @@ public class AddProductController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         //generate an ID based on the number of items in the list to use for new part
-        AddProdIDLabel.setText(String.valueOf((Inventory.allProducts.size()) + 1));
+        Comparator<Product> byID = (prodA, prodB) -> prodB.getProductID() - prodA.getProductID();
+        int nextID = Inventory.allProducts.sorted(byID).get(0).getProductID() + 1;
 
+        AddProdIDLabel.setText(String.valueOf(nextID));
+        newProduct = new Product(nextID, null, 0.0, 0, 0, 0);
 
         //Populate the add parts table to search through and add from
         AddPartTableview.setItems(Inventory.getAllParts());
@@ -194,7 +259,7 @@ public class AddProductController implements Initializable {
 
 
         //Direct table view to get data from observable list in product file using get associated parts method
-        DeletePartTablevew.setItems(Product.getAllAssociatedParts());
+        DeletePartTablevew.setItems(newProduct.getAllAssociatedParts());
 
         //direct table columns on which values to get for each attribute
         delPartIDColumn.setCellValueFactory(new PropertyValueFactory<>("partID"));

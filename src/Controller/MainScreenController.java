@@ -161,7 +161,7 @@ public class MainScreenController implements Initializable {
     @FXML
     void displayModifyPartOnClick(MouseEvent event) throws IOException {
 
-        try {
+//        try {
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getResource("../View/ModifyPart.fxml"));
             loader.load();
@@ -176,11 +176,11 @@ public class MainScreenController implements Initializable {
             Parent scene = loader.getRoot();
             stage.setScene(new Scene(scene));
             stage.show();
-        } catch(NullPointerException e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setContentText("Please select an item to modify");
-            alert.showAndWait();
-        }
+//        } catch(NullPointerException e) {
+//            Alert alert = new Alert(Alert.AlertType.ERROR);
+//            alert.setContentText("Please select an item to modify");
+//            alert.showAndWait();
+//        }
 
     }
 

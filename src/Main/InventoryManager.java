@@ -2,7 +2,6 @@ package Main;
 
 import Model.InHouse;
 import Model.Inventory;
-import Model.Part;
 import Model.Product;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -31,6 +30,7 @@ public class InventoryManager extends Application {
 
         Inventory.addPart(newPart);
         Inventory.addProduct(newProd);
+        //
 
         launch(args);
     }

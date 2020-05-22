@@ -23,6 +23,12 @@ public class ModifyPartController implements Initializable {
     Parent scene;
 
     @FXML
+    private Button saveButton;
+
+    @FXML
+    private Button cancelButton;
+
+    @FXML
     private RadioButton InHouseRadio;
 
     @FXML
@@ -32,34 +38,29 @@ public class ModifyPartController implements Initializable {
     private RadioButton OutsourcedRadio;
 
     @FXML
-    private TextField partNameText;
+    private Label PartIDLabel;
 
     @FXML
-    private Label partIDLabel;
+    private TextField PartNameText;
 
     @FXML
-    private TextField partInvText;
+    private TextField PartInvText;
 
     @FXML
-    private TextField partPriceText;
+    private TextField PartPriceText;
 
     @FXML
-    private TextField partMaxText;
+    private TextField PartMaxText;
 
     @FXML
-    private TextField partMinText;
+    private TextField PartMinText;
+
+    @FXML
+    private Label sourceLabel;
 
     @FXML
     private TextField sourceText;
 
-    @FXML
-    private Button saveButton;
-
-    @FXML
-    private Button cancelButton;
-
-    @FXML
-    private Label sourceLabel;
     private int itemIndex;
 
     @FXML
@@ -93,12 +94,12 @@ public class ModifyPartController implements Initializable {
     void saveOnClick(MouseEvent event) throws IOException {
 
         try {
-            int id = Integer.parseInt(partIDLabel.getText());
-            String name = partNameText.getText();
-            int stock = Integer.parseInt(partInvText.getText());
-            double price = Double.parseDouble(partPriceText.getText());
-            int max = Integer.parseInt(partMaxText.getText());
-            int min = Integer.parseInt(partMinText.getText());
+            int id = Integer.parseInt(PartIDLabel.getText());
+            String name = PartNameText.getText();
+            int stock = Integer.parseInt(PartInvText.getText());
+            double price = Double.parseDouble(PartPriceText.getText());
+            int max = Integer.parseInt(PartMaxText.getText());
+            int min = Integer.parseInt(PartMinText.getText());
 
             //Logical Error Handling
             if((stock > max) || (stock < min) || (stock < 0)) {
@@ -155,12 +156,12 @@ public class ModifyPartController implements Initializable {
     public void getPartDetails(Part part, int index) {
         itemIndex = index;
 
-        partIDLabel.setText(String.valueOf(part.getPartID()));
-        partNameText.setText(part.getPartName());
-        partInvText.setText(String.valueOf(part.getPartStock()));
-        partPriceText.setText(String.valueOf(part.getPartPrice()));
-        partMaxText.setText(String.valueOf(part.getPartMax()));
-        partMinText.setText(String.valueOf(part.getPartMin()));
+        PartIDLabel.setText(String.valueOf(part.getPartID()));
+        PartNameText.setText(part.getPartName());
+        PartInvText.setText(String.valueOf(part.getPartStock()));
+        PartPriceText.setText(String.valueOf(part.getPartPrice()));
+        PartMaxText.setText(String.valueOf(part.getPartMax()));
+        PartMinText.setText(String.valueOf(part.getPartMin()));
 
         if(part instanceof InHouse) {
             InHouseRadio.setSelected(true);
@@ -180,3 +181,4 @@ public class ModifyPartController implements Initializable {
 
     }
 }
+

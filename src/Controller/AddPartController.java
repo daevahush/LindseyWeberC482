@@ -3,7 +3,6 @@ package Controller;
 import Model.InHouse;
 import Model.Inventory;
 import Model.Outsourced;
-import Model.Part;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -14,7 +13,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Comparator;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -73,7 +71,7 @@ public class AddPartController implements Initializable {
 
         if(result.get() == ButtonType.OK) {
             stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+            scene = FXMLLoader.load(getClass().getResource("../View/MainScreen.fxml"));
             stage.setScene(new Scene(scene));
             stage.show();
         }
@@ -123,7 +121,7 @@ public class AddPartController implements Initializable {
 
                 //Moves back to Main screen
                 stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-                scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+                scene = FXMLLoader.load(getClass().getResource("../View/MainScreen.fxml"));
                 stage.setScene(new Scene(scene));
                 stage.show();
             } else if(OutsourcedRadio.isSelected()) { //Creates new Outsourced part
@@ -132,11 +130,12 @@ public class AddPartController implements Initializable {
 
                 //Moves back to Main screen
                 stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-                scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+                scene = FXMLLoader.load(getClass().getResource("../View/MainScreen.fxml"));
                 stage.setScene(new Scene(scene));
                 stage.show();
             }
-
+            ++id;
+            Inventory.setpartID(id);
         } catch(NumberFormatException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -150,10 +149,7 @@ public class AddPartController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         //generate an ID based on the number of items in the list to use for new part
-        Comparator<Part> byID = (partA, partB) -> partB.getPartID() - partA.getPartID();
-        int nextID = Inventory.allParts.sorted(byID).get(0).getPartID() +1;
-
-        AddPartIDLabel.setText(String.valueOf(nextID));
+        AddPartIDLabel.setText(String.valueOf(Inventory.getpartID()));
 
         //Set preselected radio button on start
         InHouseRadio.setSelected(true);

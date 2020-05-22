@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane maxHeight="800.0" maxWidth="900.0" minHeight="800.0" minWidth="900.0" prefHeight="800.0" prefWidth="900.0" style="-fx-background-color: #ECF0F1;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.MainScreenController">
+   <children>
+      <AnchorPane layoutX="25.0" layoutY="47.0" maxHeight="330.0" maxWidth="850.0" minHeight="330.0" minWidth="850.0" prefHeight="330.0" prefWidth="850.0" style="-fx-background-color: white; -fx-border-color: #2A2D34; -fx-background-radius: 5; -fx-border-radius: 5;">
+         <children>
+            <AnchorPane maxHeight="50.0" maxWidth="850.0" minHeight="50.0" minWidth="850.0" prefHeight="50.0" prefWidth="850.0" style="-fx-background-color: #2A2D34; -fx-background-radius: 5;">
+               <children>
+                  <Label layoutX="29.0" layoutY="15.0" style="-fx-font-family: roboto; -fx-font-size: 18; -fx-font-weight: bold;" text="Parts" textFill="ORANGE" />
+                  <Button fx:id="searchPartButton" layoutX="592.0" layoutY="11.0" mnemonicParsing="false" onMouseClicked="#searchPartOnClick" style="-fx-background-color: #2A2D34; -fx-border-color: white;" text="Search" textFill="ORANGE" />
+                  <TextField fx:id="searchPartText" layoutX="660.0" layoutY="10.0" style="-fx-background-color: white; -fx-border-color: black;" />
+               </children>
+            </AnchorPane>
+            <Button fx:id="addPartButton" layoutX="64.0" layoutY="289.0" mnemonicParsing="false" onMouseClicked="#displayAddPartOnClick" prefHeight="27.0" prefWidth="54.0" style="-fx-background-color: #2A2D34;" text="Add" textFill="ORANGE" />
+            <Button fx:id="modifyPartButton" layoutX="389.0" layoutY="289.0" mnemonicParsing="false" onMouseClicked="#displayModifyPartOnClick" style="-fx-background-color: #2A2D34;" text="Modify" textFill="ORANGE" />
+            <Button fx:id="deletePartButton" layoutX="761.0" layoutY="289.0" mnemonicParsing="false" onMouseClicked="#deletePartOnClick" style="-fx-background-color: #2A2D34;" text="Delete" textFill="ORANGE" />
+            <TableView fx:id="partTableview" layoutX="25.0" layoutY="75.0" prefHeight="200.0" prefWidth="800.0" style="-fx-selection-bar: orange;" stylesheets="@css.css">
+              <columns>
+                <TableColumn fx:id="partIDColumn" prefWidth="84.0" text="Part ID" />
+                <TableColumn fx:id="partNameColumn" prefWidth="103.0" text="Part Name" />
+                  <TableColumn fx:id="partInvLevelColumn" prefWidth="105.0" text="Inventory Level" />
+                  <TableColumn fx:id="partPriceColumn" prefWidth="110.0" text="Price per Unit" />
+              </columns>
+            </TableView>
+         </children>
+      </AnchorPane>
+      <AnchorPane layoutX="25.0" layoutY="424.0" maxHeight="330.0" maxWidth="850.0" minHeight="330.0" minWidth="850.0" prefHeight="330.0" prefWidth="850.0" style="-fx-border-radius: 5; -fx-background-color: white; -fx-background-radius: 5; -fx-border-color: #2A2D34;">
+         <children>
+            <TableView fx:id="prodTableview" layoutX="25.0" layoutY="65.0" prefHeight="200.0" prefWidth="800.0" stylesheets="@css.css">
+               <columns>
+                  <TableColumn fx:id="prodIDColumn" prefWidth="84.0" text="Product ID" />
+                  <TableColumn fx:id="prodNameColumn" prefWidth="102.0" text="Product Name" />
+                  <TableColumn fx:id="prodInvLevelColumn" prefWidth="108.0" text="Inventory Level" />
+                  <TableColumn fx:id="prodPriceColumn" prefWidth="108.0" text="Price per Unit" />
+               </columns>
+            </TableView>
+            <AnchorPane maxHeight="50.0" maxWidth="850.0" minHeight="50.0" minWidth="850.0" prefHeight="50.0" prefWidth="850.0" style="-fx-background-color: #2A2D34; -fx-background-radius: 5;">
+               <children>
+                  <Button fx:id="searchProdButton" layoutX="592.0" layoutY="11.0" mnemonicParsing="false" onMouseClicked="#searchProdOnClick" style="-fx-background-color: #2A2D34; -fx-border-color: white;" text="Search" textFill="ORANGE" />
+                  <TextField fx:id="searchProdText" layoutX="660.0" layoutY="10.0" style="-fx-background-color: white; -fx-border-color: black;" />
+                  <Label layoutX="27.0" layoutY="15.0" prefHeight="23.0" prefWidth="83.0" style="-fx-font-family: roboto; -fx-font-size: 18; -fx-font-weight: bold;" text="Products" textFill="ORANGE" />
+               </children>
+            </AnchorPane>
+            <Button fx:id="addProductButton" layoutX="50.0" layoutY="280.0" mnemonicParsing="false" onMouseClicked="#displayAddProdOnClick" prefHeight="27.0" prefWidth="54.0" style="-fx-background-color: #2A2D34;" text="Add" textFill="ORANGE" />
+            <Button fx:id="deleteProductButton" layoutX="764.0" layoutY="280.0" mnemonicParsing="false" onMouseClicked="#deleteProdOnClick" style="-fx-background-color: #2A2D34;" text="Delete" textFill="ORANGE" />
+            <Button fx:id="modifyProductButton" layoutX="397.0" layoutY="280.0" mnemonicParsing="false" onMouseClicked="#displayModifyProdOnClick" style="-fx-background-color: #2A2D34;" text="Modify" textFill="ORANGE" />
+         </children>
+      </AnchorPane>
+   </children>
+</AnchorPane>

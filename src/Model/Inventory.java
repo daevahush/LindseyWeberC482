@@ -5,6 +5,27 @@ import javafx.collections.ObservableList;
 
 public class Inventory {
 
+    private static int partID;
+    private static int productID;
+
+    public static void setpartID(int id) {
+        Inventory.partID = id;
+    }
+
+    public static int getpartID() {
+        return partID;
+    }
+
+    public static void setproductID(int id) {
+        Inventory.productID = id;
+    }
+
+    public static int getProductID() {
+        return productID;
+    }
+
+
+
     public static ObservableList<Part> allParts = FXCollections.observableArrayList();
     public static ObservableList<Product> allProducts = FXCollections.observableArrayList();
 

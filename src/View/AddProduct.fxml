@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.RowConstraints?>
+
+<AnchorPane maxHeight="650.0" maxWidth="800.0" minHeight="650.0" minWidth="800.0" prefHeight="650.0" prefWidth="800.0" style="-fx-background-color: white;" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.AddProductController">
+   <children>
+      <AnchorPane layoutX="321.0" layoutY="362.0" prefHeight="216.0" prefWidth="454.0" style="-fx-border-color: grey; -fx-border-radius: 5;">
+         <children>
+            <TableView fx:id="DeletePartTablevew" layoutX="28.0" layoutY="25.0" prefHeight="129.0" prefWidth="391.0" style="-fx-selection-bar: orange;" stylesheets="@css.css">
+               <columns>
+                  <TableColumn fx:id="delPartIDColumn" prefWidth="92.0" text="Part ID" />
+                  <TableColumn fx:id="delPartNameColumn" prefWidth="92.0" text="Part Name" />
+                  <TableColumn fx:id="delInvLevelColumn" prefWidth="100.0" text="Inventory Level" />
+                  <TableColumn fx:id="delPriceColumn" prefWidth="105.0" text="Price per Unit" />
+               </columns>
+            </TableView>
+            <Button fx:id="DeletePartButton" layoutX="337.0" layoutY="164.0" mnemonicParsing="false" onMouseClicked="#deletePartOnClick" prefHeight="27.0" prefWidth="82.0" style="-fx-background-color: #2A2D34;" text="Delete" textFill="ORANGE" />
+         </children>
+      </AnchorPane>
+      <AnchorPane maxHeight="50.0" maxWidth="800.0" minHeight="50.0" minWidth="800.0" prefHeight="50.0" prefWidth="800.0" style="-fx-background-color: #2A2D34;">
+         <children>
+            <Label layoutX="351.0" layoutY="14.0" style="-fx-font-family: roboto; -fx-font-size: 18; -fx-font-weight: bold;" text="Add Product" textFill="ORANGE" />
+         </children>
+      </AnchorPane>
+      <GridPane layoutX="35.0" layoutY="205.0" prefHeight="240.0" prefWidth="235.0">
+        <columnConstraints>
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+          <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+        </columnConstraints>
+        <rowConstraints>
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+          <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+            <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+        </rowConstraints>
+         <children>
+            <Label style="-fx-font-size: 16;" text="ID" />
+            <Label fx:id="AddProdIDLabel" maxHeight="29.0" maxWidth="163.0" prefHeight="62.0" prefWidth="233.0" style="-fx-border-color: grey;" GridPane.columnIndex="1" />
+            <Label style="-fx-font-size: 16;" text="Name" GridPane.rowIndex="1" />
+            <TextField fx:id="AddProdNameText" style="-fx-background-color: white; -fx-border-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+            <Label style="-fx-font-size: 16;" text="Inv" GridPane.rowIndex="2" />
+            <TextField fx:id="AddProdInvText" style="-fx-background-color: white; -fx-border-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+            <Label style="-fx-font-size: 16;" text="Price" GridPane.rowIndex="3" />
+            <TextField fx:id="AddProdPriceText" style="-fx-background-color: white; -fx-border-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+            <Label style="-fx-font-size: 16;" text="Max" GridPane.rowIndex="4" />
+            <TextField fx:id="AddProdMaxText" prefHeight="27.0" prefWidth="57.0" style="-fx-background-color: white; -fx-border-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+            <Label style="-fx-font-size: 16;" text="Min" GridPane.rowIndex="5" />
+            <TextField fx:id="AddProdMinText" prefHeight="27.0" prefWidth="57.0" style="-fx-background-color: white; -fx-border-color: grey;" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+         </children>
+      </GridPane>
+      <AnchorPane layoutX="321.0" layoutY="87.0" prefHeight="263.0" prefWidth="454.0" style="-fx-border-color: grey; -fx-border-radius: 5;">
+         <children>
+            <TextField fx:id="AddProdSearchText" layoutX="263.0" layoutY="14.0" style="-fx-background-color: white; -fx-border-color: black;" />
+            <TableView fx:id="AddPartTableview" layoutX="34.0" layoutY="62.0" prefHeight="141.0" prefWidth="391.0" style="-fx-selection-bar: orange;" stylesheets="@css.css">
+              <columns>
+                <TableColumn fx:id="addPartIDColumn" prefWidth="92.0" text="Part ID" />
+                <TableColumn fx:id="addPartNameColumn" prefWidth="92.0" text="Part Name" />
+                  <TableColumn fx:id="addInvLevelColumn" prefWidth="102.0" text="Inventory Level" />
+                  <TableColumn fx:id="addPriceColumn" prefWidth="103.0" text="Price per Unit" />
+              </columns>
+            </TableView>
+            <Button fx:id="SearchButton" layoutX="157.0" layoutY="16.0" mnemonicParsing="false" onMouseClicked="#searchOnClick" prefHeight="27.0" prefWidth="82.0" style="-fx-background-color: #2A2D34;" text="Search" textFill="ORANGE" />
+            <Button fx:id="AddPartButton" layoutX="344.0" layoutY="222.0" mnemonicParsing="false" onMouseClicked="#addPartOnClick" prefHeight="27.0" prefWidth="82.0" style="-fx-background-color: #2A2D34;" text="Add" textFill="ORANGE" />
+         </children>
+      </AnchorPane>
+      <Button fx:id="SaveProdButton" layoutX="507.0" layoutY="605.0" mnemonicParsing="false" onMouseClicked="#saveProdOnClick" prefHeight="27.0" prefWidth="82.0" style="-fx-background-color: #2A2D34;" text="Save" textFill="ORANGE" />
+      <Button fx:id="CancelButton" layoutX="693.0" layoutY="605.0" mnemonicParsing="false" onMouseClicked="#cancelOnClick" prefHeight="27.0" prefWidth="82.0" style="-fx-background-color: #2A2D34;" text="Cancel" textFill="ORANGE" />
+   </children>
+</AnchorPane>

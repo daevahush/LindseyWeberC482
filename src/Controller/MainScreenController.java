@@ -142,7 +142,7 @@ public class MainScreenController implements Initializable {
     void displayAddPartOnClick(MouseEvent event) throws IOException {
 
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("AddPart.fxml"));
+        scene = FXMLLoader.load(getClass().getResource("../View/AddPart.fxml"));
         stage.setScene(new Scene(scene));
         stage.show();
 
@@ -152,7 +152,7 @@ public class MainScreenController implements Initializable {
     void displayAddProdOnClick(MouseEvent event) throws IOException {
 
         stage = (Stage)((Button)event.getSource()).getScene().getWindow();
-        scene = FXMLLoader.load(getClass().getResource("AddProduct.fxml"));
+        scene = FXMLLoader.load(getClass().getResource("../View/AddProduct.fxml"));
         stage.setScene(new Scene(scene));
         stage.show();
 
@@ -163,7 +163,7 @@ public class MainScreenController implements Initializable {
 
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("ModifyPart.fxml"));
+            loader.setLocation(getClass().getResource("../View/ModifyPart.fxml"));
             loader.load();
 
             ModifyPartController ModPartController = loader.getController();
@@ -188,7 +188,7 @@ public class MainScreenController implements Initializable {
     void displayModifyProdOnClick(MouseEvent event) throws IOException {
         try {
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getResource("ModifyProduct.fxml"));
+            loader.setLocation(getClass().getResource("../View/ModifyProduct.fxml"));
             loader.load();
 
             ModifyProductController ModProdController = loader.getController();

@@ -13,7 +13,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.stage.Stage;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Comparator;
 import java.util.Optional;
 import java.util.ResourceBundle;
 
@@ -141,7 +140,7 @@ public class AddProductController implements Initializable {
 
         if (result.get() == ButtonType.OK) {
             stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-            scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+            scene = FXMLLoader.load(getClass().getResource("../View/MainScreen.fxml"));
             stage.setScene(new Scene(scene));
             stage.show();
         }
@@ -161,6 +160,7 @@ public class AddProductController implements Initializable {
     @FXML
     void saveProdOnClick(MouseEvent event) throws IOException {
         try {
+            int id = Integer.parseInt(AddProdIDLabel.getText());
             String name = AddProdNameText.getText();
             int stock = Integer.parseInt(AddProdInvText.getText());
             double price = Double.parseDouble(AddProdPriceText.getText());
@@ -206,11 +206,12 @@ public class AddProductController implements Initializable {
 
                 //Moves back to Main screen
                 stage = (Stage) ((Button) event.getSource()).getScene().getWindow();
-                scene = FXMLLoader.load(getClass().getResource("MainScreen.fxml"));
+                scene = FXMLLoader.load(getClass().getResource("../View/MainScreen.fxml"));
                 stage.setScene(new Scene(scene));
                 stage.show();
             }
-
+            id++;
+            Inventory.setproductID(id);
         } catch (NumberFormatException e) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setContentText("Please enter valid values");
@@ -242,11 +243,8 @@ public class AddProductController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
 
         //generate an ID based on the number of items in the list to use for new part
-        Comparator<Product> byID = (prodA, prodB) -> prodB.getProductID() - prodA.getProductID();
-        int nextID = Inventory.allProducts.sorted(byID).get(0).getProductID() + 1;
-
-        AddProdIDLabel.setText(String.valueOf(nextID));
-        newProduct = new Product(nextID, null, 0.0, 0, 0, 0);
+        AddProdIDLabel.setText(String.valueOf(Inventory.getProductID()));
+        newProduct = new Product(Inventory.getProductID(), null, 0.0, 0, 0, 0);
 
         //Populate the add parts table to search through and add from
         AddPartTableview.setItems(Inventory.getAllParts());
